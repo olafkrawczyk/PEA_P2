@@ -19,9 +19,7 @@ TabuList::TabuList(int size, int max_cadence, int horizon)
 		for (int k = 0; k < size; k++)
 		{
 			tabu_list[i][k].cadence = 0;
-			tabu_list[k][i].cadence = 0;
 			tabu_list[i][k].usages_cnt = 0;
-			tabu_list[k][i].usages_cnt = 0;
 		}
 	}
 }
