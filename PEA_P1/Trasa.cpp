@@ -25,6 +25,7 @@ void Trasa::set_route(Trasa * in_trasa)
 	}
 }
 
+
 Trasa::~Trasa()
 {
 	delete[] trasa;
@@ -53,6 +54,8 @@ void Trasa::wybierz_w_otoczeniu(Trasa* in_route)
 	delete[] trasa;
 	trasa = swapped;
 }
+
+
 
 void Trasa::losuj_permutacje()
 {

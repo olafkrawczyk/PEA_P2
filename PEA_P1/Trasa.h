@@ -1,3 +1,4 @@
+#include "TabuList.h"
 #pragma once
 class Trasa
 {
@@ -13,6 +14,7 @@ public:
 	Trasa(int in_dlugosc);
 	Trasa(int *in_trasa, int dlugosc);
 	void set_route(Trasa*);
+
 	~Trasa();
 
 };

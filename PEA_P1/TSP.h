@@ -1,6 +1,7 @@
 #pragma once
 #include <fstream>
 #include "Trasa.h"
+#include "TabuList.h"
 
 class TSP
 {
@@ -18,12 +19,16 @@ public:
 	double dl_trasy(int trasa[]);
 	void print_best_route();
 	void simulated_annealing(double T_MAX, double T_MIN, double alfa);
-	void tabu_search();
+	
 	bool accept_worse(double, double, double);
 	double generuj_temp();
 	void wypisz_wynik();
 	double get_error();
 	double get_route_val();
+
+	void tabu_search(int max_cadence, int horizon);
+	Trasa* getBestNearestSolution(Trasa*, TabuList *);
+
 	TSP();
 	~TSP();
 };
