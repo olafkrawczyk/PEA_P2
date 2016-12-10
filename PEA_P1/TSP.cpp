@@ -143,45 +143,65 @@ void TSP::simulated_annealing(double T_MAX, double T_MIN, double alfa)
 	blad = (best_route_val - optimal)*100 / optimal;
 }
 
-Trasa* TSP::getBestNearestSolution(Trasa * trasa_, TabuList * tabu)
+Trasa* TSP::getBestNearestSolution(Trasa * trasa_, TabuList * tabu, float aspiration)
 {
-	Trasa* best = new Trasa(trasa_->get_route(), liczba_miast);
-	for (int i = 0; i < liczba_miast; i++)
+	int curr_route, best_route;
+	float improvment;
+	Trasa* best = new Trasa(liczba_miast);
+	best->set_route(trasa_);
+
+	for (int i = 0; i < liczba_miast-1; i++)
 	{
 		for (int j = i + 1; j < liczba_miast; j++)
 		{
-			if (tabu->getCadecny(i, j) != 0)
-				break;
-
+			tabu->decrementCadence();
 			trasa_->swap(i, j);
-			if (dl_trasy(trasa_->get_route()) < dl_trasy(best->get_route())) {
+
+			curr_route = dl_trasy(trasa_->get_route());
+			best_route = dl_trasy(best->get_route());
+			if (tabu->getCadecny(i, j) != 0) {
+				if (curr_route < best_route) {
+					improvment = (float)(best_route - curr_route) / best_route;
+					if (improvment >= aspiration) {
+						tabu->resetTabuList();
+						delete best;
+						best = new Trasa(liczba_miast);
+						best->set_route(trasa_);
+						tabu->addMove(i, j);
+					}
+				}
+				trasa_->swap(i, j);
+				break;
+			}
+			else if ( curr_route < best_route) {
 				delete best;
-				best = new Trasa(trasa_->get_route(), liczba_miast);
+				best = new Trasa(liczba_miast);
+				best->set_route(trasa_);
 				tabu->addMove(i, j);
 			}
 			trasa_->swap(i, j);
-			tabu->decrementCadence();
 		}
 	}
-
 	return best;
 }
 
-void TSP::tabu_search(int max_cadence, int horizon)
+void TSP::tabu_search(int max_cadence, int horizon, int MAX_TRIES)
 {
-	int max_tries = 0; // do parametru
+	int max_tries = MAX_TRIES; // do parametru
 	Trasa *best_route = new Trasa(liczba_miast);
 	best_route->losuj_permutacje();
-	Trasa *current_route = best_route;
+	Trasa *current_route = new Trasa(liczba_miast);
+	current_route->set_route(best_route);
 
 	TabuList *tabu_list = new TabuList(liczba_miast, max_cadence, horizon);
 	for (int i = 0; i < max_tries; i++)
 	{
-		current_route = getBestNearestSolution(current_route, tabu_list);
-		if (dl_trasy(current_route->get_route()) < dl_trasy(best_route->get_route)) {
+		current_route = getBestNearestSolution(current_route, tabu_list, 0.5);
+		if (dl_trasy(current_route->get_route()) < dl_trasy(best_route->get_route())) {
 			delete best_route;
 			best_route = current_route;
 		}
+		
 	}
 
 	best_route_val = dl_trasy(best_route->get_route());

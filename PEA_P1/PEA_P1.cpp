@@ -190,7 +190,7 @@ int main()
 	double alfa = 0.999;
 	char k = 'z';
 
-	while (k != '7')
+	/*while (k != '7')
 	{
 		switch (k)
 		{
@@ -250,6 +250,10 @@ int main()
 		problem->wypisz_wynik();
 	}
 	*/
+
+	problem->wczytaj_z_pliku("gr17.txt");
+	problem->tabu_search(50, 50, 500);
+
 	std::cout << std::endl;
 	system("pause");
     return 0;

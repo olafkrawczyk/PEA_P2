@@ -26,8 +26,8 @@ public:
 	double get_error();
 	double get_route_val();
 
-	void tabu_search(int max_cadence, int horizon);
-	Trasa* getBestNearestSolution(Trasa*, TabuList *);
+	void tabu_search(int max_cadence, int horizon, int);
+	Trasa* getBestNearestSolution(Trasa*, TabuList *, float);
 
 	TSP();
 	~TSP();

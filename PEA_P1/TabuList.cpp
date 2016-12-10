@@ -16,6 +16,13 @@ TabuList::TabuList(int size, int max_cadence, int horizon)
 	for (int i = 0; i < size; i++)
 	{
 		tabu_list[i] = new Move[size];
+		for (int k = 0; k < size; k++)
+		{
+			tabu_list[i][k].cadence = 0;
+			tabu_list[k][i].cadence = 0;
+			tabu_list[i][k].usages_cnt = 0;
+			tabu_list[k][i].usages_cnt = 0;
+		}
 	}
 }
 
@@ -23,11 +30,8 @@ void TabuList::addMove(int start, int end)
 {
 	tabu_list[start][end].usages_cnt++;
 	tabu_list[end][start].usages_cnt++;
-
-	if (tabu_list[start][end].cadence >= max_cadence) {
-		tabu_list[start][end].cadence = 0;
-		tabu_list[end][start].cadence = 0;
-	}
+	tabu_list[start][end].cadence = max_cadence;
+	tabu_list[end][start].cadence = max_cadence;
 }
 
 void TabuList::decrementCadence()
@@ -38,7 +42,6 @@ void TabuList::decrementCadence()
 		{
 			if (tabu_list[i][k].cadence != 0) {
 				tabu_list[i][k].cadence--;
-				tabu_list[k][i].cadence--;
 			}
 		}
 	}
@@ -54,7 +57,6 @@ void TabuList::checkHorizon()
 		{
 			if (tabu_list[i][k].usages_cnt >= horizon) {
 				tabu_list[i][k].usages_cnt = 0;
-				tabu_list[k][i].usages_cnt = 0;
 			}
 		}
 	}
@@ -67,7 +69,8 @@ bool TabuList::moveIsAvailable(int start, int end)
 
 int TabuList::getCadecny(int i, int k)
 {
-	return tabu_list[i][k].cadence;
+	int cad = tabu_list[i][k].cadence;
+	return cad;
 }
 
 
@@ -78,10 +81,7 @@ void TabuList::resetTabuList()
 		for (int k = 0; k < size; k++)
 		{
 				tabu_list[i][k].cadence = 0;
-				tabu_list[k][i].cadence = 0;
 				tabu_list[i][k].usages_cnt = 0;
-				tabu_list[k][i].usages_cnt = 0;
-
 		}
 	}
 }
