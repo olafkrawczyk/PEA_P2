@@ -143,70 +143,43 @@ void TSP::simulated_annealing(double T_MAX, double T_MIN, double alfa)
 	blad = (best_route_val - optimal)*100 / optimal;
 }
 
-Trasa* TSP::getBestNearestSolution(Trasa * trasa_, TabuList * tabu, float aspiration)
-{
-	int curr_route, best_route;
-	float improvment;
-	Trasa* best = new Trasa(liczba_miast);
-	best->set_route(trasa_);
+Trasa* TSP::getBestNearestSolution(Trasa * trasa_)
+{	
+	Trasa * local_best = new Trasa(liczba_miast);
+	local_best->set_route(trasa_);
+	Trasa * local_tmp = new Trasa(liczba_miast);
+	local_best->set_route(trasa_);
 
-	for (int i = 0; i < liczba_miast-1; i++)
+	for (int i = 0; i < liczba_miast-2; i++)
 	{
-		for (int j = i + 1; j < liczba_miast; j++)
+		for (int k = i; k < liczba_miast; k++)
 		{
-			tabu->decrementCadence();
-			trasa_->swap(i, j);
-
-			curr_route = dl_trasy(trasa_->get_route());
-			best_route = dl_trasy(best->get_route());
-			if (tabu->getCadecny(i, j) != 0) {
-				if (curr_route < best_route) {
-					improvment = (float)(best_route - curr_route) / best_route;
-					if (improvment >= aspiration) {
-						tabu->resetTabuList();
-						delete best;
-						best = new Trasa(liczba_miast);
-						best->set_route(trasa_);
-						tabu->addMove(i, j);
-					}
-				}
-				trasa_->swap(i, j);
-				break;
+			local_tmp->swap(i, k);
+			if (dl_trasy(local_tmp->get_route()) < dl_trasy(local_best->get_route()))
+			{
+				local_best->set_route(local_tmp);
 			}
-			else if ( curr_route < best_route) {
-				delete best;
-				best = new Trasa(liczba_miast);
-				best->set_route(trasa_);
-				tabu->addMove(i, j);
-			}
-			trasa_->swap(i, j);
+			local_tmp->swap(i, k);
 		}
 	}
-	return best;
+	return local_best;
 }
 
-void TSP::tabu_search(int max_cadence, int horizon, int MAX_TRIES)
+void TSP::tabu_search(int MAX_TRIES)
 {
-	int max_tries = MAX_TRIES; // do parametru
-	Trasa *best_route = new Trasa(liczba_miast);
-	best_route->losuj_permutacje();
-	Trasa *current_route = new Trasa(liczba_miast);
-	current_route->set_route(best_route);
-
-	TabuList *tabu_list = new TabuList(liczba_miast, max_cadence, horizon);
-	for (int i = 0; i < max_tries; i++)
+	Trasa *best = new Trasa(liczba_miast);
+	Trasa *tmp;
+	for (int i = 0; i < MAX_TRIES; i++)
 	{
-		current_route = getBestNearestSolution(current_route, tabu_list, 0.5);
-		if (dl_trasy(current_route->get_route()) < dl_trasy(best_route->get_route())) {
-			delete best_route;
-			best_route = current_route;
+		tmp = getBestNearestSolution(best);
+		if (dl_trasy(tmp->get_route()) < dl_trasy(best->get_route())) {
+			delete best;
+			best = tmp;
 		}
-		
 	}
 
-	best_route_val = dl_trasy(best_route->get_route());
+	best_route_val = dl_trasy(best->get_route());
 	blad = (best_route_val - optimal) * 100 / optimal;
-
 	wypisz_wynik();
 }
 
