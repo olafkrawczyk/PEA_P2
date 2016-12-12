@@ -27,7 +27,7 @@ public:
 	double get_route_val();
 
 	void tabu_search(int);
-	Trasa* getBestNearestSolution(Trasa*);
+	Trasa* getBestNearSolution(Trasa*, TabuList *);
 
 	TSP();
 	~TSP();

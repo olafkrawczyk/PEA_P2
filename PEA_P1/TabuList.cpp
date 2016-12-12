@@ -10,6 +10,7 @@ TabuList::TabuList(int size)
 {
 	this->size = size;
 	begin = 0;
+	tabu_list = new Move[size];
 }
 
 void TabuList::Add(Move m)

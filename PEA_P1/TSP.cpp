@@ -143,46 +143,60 @@ void TSP::simulated_annealing(double T_MAX, double T_MIN, double alfa)
 	blad = (best_route_val - optimal)*100 / optimal;
 }
 
-Trasa* TSP::getBestNearestSolution(Trasa * trasa_)
+Trasa* TSP::getBestNearSolution(Trasa * trasa_, TabuList * tabu_list)
 {	
 	Trasa * local_best = new Trasa(liczba_miast);
 	local_best->set_route(trasa_);
 	Trasa * local_tmp = new Trasa(liczba_miast);
 	local_best->set_route(trasa_);
 
+	int bf, bt;
+	bool best_found = false;
+
 	for (int i = 0; i < liczba_miast-2; i++)
 	{
 		for (int k = i; k < liczba_miast; k++)
 		{
+			if (tabu_list->onTabu(Move(i, k)))
+				continue;
 			local_tmp->swap(i, k);
 			if (dl_trasy(local_tmp->get_route()) < dl_trasy(local_best->get_route()))
 			{
 				local_best->set_route(local_tmp);
+				best_found = true;
+				bf = i;
+				bt = k;
 			}
 			local_tmp->swap(i, k);
 		}
 	}
 
+	if (best_found)
+		tabu_list->Add(Move(bf, bt));
 	delete local_tmp;
 	return local_best;
 }
 
 void TSP::tabu_search(int MAX_TRIES)
 {
+	TabuList * tabu_list = new TabuList(5);
+	
 	Trasa *best = new Trasa(liczba_miast);
-	Trasa *tmp;
+	Trasa *tmp = new Trasa(liczba_miast);
+	
 	for (int i = 0; i < MAX_TRIES; i++)
 	{
-		tmp = getBestNearestSolution(best);
+		tmp = getBestNearSolution(tmp, tabu_list);
 		if (dl_trasy(tmp->get_route()) < dl_trasy(best->get_route())) {
-			delete best;
-			best = tmp;
+			best->set_route(tmp);
 		}
 	}
 
 	best_route_val = dl_trasy(best->get_route());
 	blad = (best_route_val - optimal) * 100 / optimal;
 	wypisz_wynik();
+
+	delete tabu_list;
 }
 
 double TSP::generuj_temp() {
