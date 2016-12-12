@@ -251,7 +251,7 @@ int main()
 	}
 	*/
 
-	problem->wczytaj_z_pliku("gr17.txt");
+	problem->wczytaj_z_pliku("gr48.txt");
 	problem->tabu_search(500);
 
 	std::cout << std::endl;

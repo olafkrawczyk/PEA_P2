@@ -162,6 +162,8 @@ Trasa* TSP::getBestNearestSolution(Trasa * trasa_)
 			local_tmp->swap(i, k);
 		}
 	}
+
+	delete local_tmp;
 	return local_best;
 }
 
