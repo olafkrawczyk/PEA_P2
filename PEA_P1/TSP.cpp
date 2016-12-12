@@ -153,7 +153,7 @@ Trasa* TSP::getBestNearSolution(Trasa * trasa_, TabuList * tabu_list)
 	int bf, bt;
 	bool best_found = false;
 
-	for (int i = 0; i < liczba_miast-2; i++)
+	for (int i = 0; i < liczba_miast-1; i++)
 	{
 		for (int k = i; k < liczba_miast; k++)
 		{
