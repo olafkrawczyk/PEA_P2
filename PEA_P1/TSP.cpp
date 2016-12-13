@@ -148,47 +148,57 @@ Trasa* TSP::getBestNearSolution(Trasa * trasa_, TabuList * tabu_list)
 	Trasa * local_best = new Trasa(liczba_miast);
 	local_best->set_route(trasa_);
 	Trasa * local_tmp = new Trasa(liczba_miast);
-	local_best->set_route(trasa_);
+	local_tmp->set_route(trasa_);
+	int best_route_len = INT_MAX;
 
-	int bf, bt;
+	int bf = -1;
+	int bt = -1;
 	bool best_found = false;
 
 	for (int i = 0; i < liczba_miast-1; i++)
 	{
-		for (int k = i; k < liczba_miast; k++)
+		for (int k = i + 1; k < liczba_miast; k++)
 		{
+			local_tmp->swap(i, k);
 			if (tabu_list->onTabu(Move(i, k)))
 				continue;
-			local_tmp->swap(i, k);
-			if (dl_trasy(local_tmp->get_route()) < dl_trasy(local_best->get_route()))
+			if (dl_trasy(local_tmp->get_route()) < best_route_len)
 			{
 				local_best->set_route(local_tmp);
-				best_found = true;
-				bf = i;
+				bf = i; 
 				bt = k;
 			}
 			local_tmp->swap(i, k);
 		}
 	}
 
-	if (best_found)
-		tabu_list->Add(Move(bf, bt));
+	tabu_list->Add(Move(bf, bt));
 	delete local_tmp;
+	delete trasa_;
 	return local_best;
 }
 
 void TSP::tabu_search(int MAX_TRIES)
 {
-	TabuList * tabu_list = new TabuList(5);
+	TabuList * tabu_list = new TabuList(liczba_miast*8);
 	
 	Trasa *best = new Trasa(liczba_miast);
 	Trasa *tmp = new Trasa(liczba_miast);
+	int nonImprvCntr = 0;
 	
-	for (int i = 0; i < MAX_TRIES; i++)
+	for (int i = 0; i < pow(liczba_miast, 3); i++)
 	{
 		tmp = getBestNearSolution(tmp, tabu_list);
 		if (dl_trasy(tmp->get_route()) < dl_trasy(best->get_route())) {
 			best->set_route(tmp);
+			nonImprvCntr = 0;
+		}
+		nonImprvCntr++;
+
+		if (nonImprvCntr >= INT_MAX) {
+			tabu_list->clearTabu();
+			tmp->losuj_permutacje();
+			nonImprvCntr = 0;
 		}
 	}
 

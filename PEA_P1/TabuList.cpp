@@ -15,9 +15,9 @@ TabuList::TabuList(int size)
 
 void TabuList::Add(Move m)
 {
-	if (begin = size - 1)
-		begin = 0;
 	tabu_list[begin++] = m;
+	if (begin == size)
+		begin = 0;
 }
 
 bool TabuList::onTabu(Move m)
@@ -30,6 +30,15 @@ bool TabuList::onTabu(Move m)
 	return false;
 }
 
+void TabuList::clearTabu()
+{
+	for (int i = 0; i < size; i++)
+	{
+		tabu_list[i].from = -1;
+		tabu_list[i].to = -1;
+
+	}
+}
 
 
 TabuList::~TabuList()

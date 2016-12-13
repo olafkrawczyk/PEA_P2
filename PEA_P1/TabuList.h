@@ -34,6 +34,7 @@ public:
 	TabuList(int size);
 	void Add(Move);
 	bool onTabu(Move);
+	void clearTabu();
 	~TabuList();
 };
 
