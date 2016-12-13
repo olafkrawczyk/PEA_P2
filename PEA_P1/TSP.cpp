@@ -163,14 +163,7 @@ Trasa* TSP::getBestNearSolution(Trasa * trasa_, TabuList * tabu_list, int soluti
 			local_tmp->swap(i, k);
 			tmp_best = dl_trasy(local_tmp->get_route());
 			if (tabu_list->onTabu(Move(i, k)))
-				if ((solution_best - tmp_best)/(float)solution_best > 0.05) {
-					local_best->set_route(local_tmp);
-					bf = i;
-					bt = k;
-					continue;
-				}
-				else
-					continue;
+				continue;
 			if ( tmp_best < best_route_len)
 			{
 				local_best->set_route(local_tmp);
@@ -190,7 +183,7 @@ Trasa* TSP::getBestNearSolution(Trasa * trasa_, TabuList * tabu_list, int soluti
 
 void TSP::tabu_search(int MAX_TRIES)
 {
-	TabuList * tabu_list = new TabuList(liczba_miast*8);
+	TabuList * tabu_list = new TabuList(log(liczba_miast));
 	
 	Trasa *best = new Trasa(liczba_miast);
 	Trasa *tmp = new Trasa(liczba_miast);
